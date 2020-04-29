@@ -32,6 +32,10 @@
 
 ## Bob is a little confused; we should probably have a step 1: clone this repo.
 ## Configuration
+
+# He runs 'configure.py' and nothing happens.
+# Now he runs python configure.py and it says docker, colorama, etc, are not installed. Those are python modules.
+# He runs it again, because pip installed those during first run.
 - Run `configure.py` with the desired options prior to starting the Orchestrator for the first time
 	- Options
 		- `-b` or `--build-image` -- Build base containers
