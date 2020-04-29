@@ -30,6 +30,7 @@
 - Python 3.6+
 - pip 18+
 
+## Bob is a little confused; we should probably have a step 1: clone this repo.
 ## Configuration
 - Run `configure.py` with the desired options prior to starting the Orchestrator for the first time
 	- Options
