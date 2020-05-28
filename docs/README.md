@@ -131,7 +131,7 @@ Actuators. In order to send OpenC2 commands to an actuator,
 you must register a device to contain the actuator, and then
 register an actuator and associate it with a device.
 
-> NOTE:  Device and Actuator identifiers within OIF must be
+> __NOTE:__  Device and Actuator identifiers within OIF *must* be
 > UUIDs, even though the OpenC2 language does not include
 > such a requirement.
 
