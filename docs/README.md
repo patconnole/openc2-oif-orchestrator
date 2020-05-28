@@ -132,7 +132,7 @@ register an actuator and associate it with a device.
 > UUIDs, even though the OpenC2 language does not include
 > such a requirement.
 
-#### Registering a device with the OIF
+#### Registering Devices
 - Give the Device a name and generate a UUID for it.
 - Select a transport
     - HTTPS: Enter host and port (Default Port 5001)
@@ -141,10 +141,22 @@ register an actuator and associate it with a device.
     - Default included device supports JSON, CBOR, and XML.
 - Note: include a brief description about what type of device you are adding.
 
-#### Registering an actuator with the OIF
+#### Registering Actuators
+> Note: a device should be registered before the actuator.
 - Give the actuator a name and generate a UUID for it.
 - Select a parent device.
-    -  Note: device should be registered before the actuator.
+    
 - Upload/Copy-Paste schema. Schema for the default included ISR actuator can be found at [device/actuator/isr/act_server/schema.json](../device/actuator/isr/act_server/schema.json).
 - This information can also be found under the [ISR Actuator](../device/actuator/isr/ReadMe.md) page.
-- If you are registering a new actuator for the first time while utilizing the MQTT transport you may need to update the `MQTT_TOPICS` environment variable. Read the MQTT Topics section [here](transport/mqtt/ReadMe.md)
+- If you are registering a new actuator for the first time
+  while utilizing the MQTT transport you may need to update
+  the `MQTT_TOPICS` environment variable. Read the MQTT
+  Topics section [here](transport/mqtt/ReadMe.md)
+
+## Extending OIF
+
+OIF is intended as a platform for exploration and
+development of OpenC2, and is designed to be be extended.
+Follow these links for tutorials for adding new
+* [message transfer protocols](./Transport.md), and 
+* [content serializations](./Serializations.md). 
