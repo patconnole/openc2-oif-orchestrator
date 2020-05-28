@@ -104,10 +104,9 @@ here:
 
 ### Docker Compose Files
 
-#### Central Logging
-- __Still in Beta__
+#### Central Logging (*Still In Beta*)
 - Run the `docker-compose` as normal with the additional option of a second `-f/--file`
-- Allows for a central location for logging rather than the docker default of per container
+- Allows for a central location for logging rather than the Docker default of per container
 - Runs on default port of 8081 for logger web GUI
 
 	```bash
