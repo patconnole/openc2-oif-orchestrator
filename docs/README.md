@@ -6,11 +6,12 @@ OpenC2 Integration Framework (OIF) is a project that will
 enable developers to create and test OpenC2 specifications
 and implementations without having to recreate an entire
 OpenC2 ecosystem.  The OIF consists of two major parts. The
-"orchestrator" (this repository) which functions as an
-OpenC2 producer and the
-"[Device](https://github.com/oasis-open/openc2-oif-device)"
+["OIF Orchestrator" (this
+repository)](https://github.com/oasis-open/openc2-oif-orchestrator)
+which functions as an OpenC2 producer and the "[OIF
+Device](https://github.com/oasis-open/openc2-oif-device)"
 which functions as an OpenC2 consumer. Due to port bindings
-it is recommended that the orchestrator and the device not
+it is recommended that the Orchestrator and the Device not
 be run on the same machine.
 
 > **DPL Question:**  can we say something about running them in
@@ -37,18 +38,22 @@ here:
 ## OIF Container/Service Defaults
 ### GUI User Credentials
 
-> Note: Admin and User GUI use the same credentials but not
-> the same login
+> Note: Admin and User GUI use the same default credentials
+> but are separate logins
+
 * Username: admin
 * PW: password
 
 ### Ports
+The following ports are configured as defaults for OIF
+functions: 
 - Logger GUI - HOST:8081
 - OIF GUI - HOST:8080
 - OIF API - HOST:8080/api
 - HTTPS - Orchestrator: HOST:5000(default)
 
 ## System Requirements
+Minimum requirements to run the OIF Orchestrator
 - Docker v18+
 - Docker-Compose v1.20+
 - Python 3.6+

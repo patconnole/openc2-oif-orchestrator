@@ -1,63 +1,140 @@
-# O.I.F. (OpenC2 Integration Fabric) Walk Through
+# O.I.F. (OpenC2 Integration Fabric) Orchestrator Walk Through
 
-This file provides a detailed walkthrough of the
-installation and configuration of the OIF Orchestrator
+This document provides a detailed walkthrough of the
+installation, configuration, and basic operations of the OIF Orchestrator.
+
+## System Preparation
+
+Developers need the following tools to start working with
+OIF:
+ - Required:  [Python](https://www.python.org/), [Docker](https://www.docker.com/)
+ - Optional: [git](https://git-scm.com/)
+
+The OIF Orchestrator requires
+[Python](https://www.python.org/) and
+[Docker](https://www.docker.com/) to operate. Developers
+should insure both of the following are installed on their
+system:
+
+- Docker, version 18 or higher
+- Python, version 3.6 or higher
+
+OIF Orchestrator also required [Docker
+Compose](https://docs.docker.com/compose/), and
+[pip](https://pip.pypa.io/en/stable/).  Docker Compose is
+[installed with
+Docker](https://docs.docker.com/compose/install/) on Windows
+and Mac systems, but must be installed separately on Linux
+systems. Pip is usually [installed with
+Python](https://pip.pypa.io/en/stable/installing/).
+Developers are advised to update all of the software
+components to the latest versions.
+
+Developers may optionally install [git](https://git-scm.com/)
+version control software, as a means of obtaining the OIF
+Orchestrator software.
+
+## Obtain OIF Orchestrator Software
+
+Developers must acquire a local copy of the OIF Orchestrator
+software. There are two approaches for this:
+ 1. Clone the [OIF
+    Orchestrator](https://github.com/oasis-open/openc2-oif-orchestrator)
+    repository in the desired location:<br>
+    `git clone
+    https://github.com/oasis-open/openc2-oif-orchestrator.git`
+ 1. Download an ZIP archive by 
+    1. Navigating to the
+       [repository](https://github.com/oasis-open/openc2-oif-orchestrator).
+	1. Click on the green **Clone** button.
+	1. Select **Download ZIP**.
+	1. Unwrap the ZIP archive in the desired location.
+
+## Configure OIF Orchestrator Software
+
+To configure the OIF Orchestrator, navigate to the directory
+containing the local software copy and Run `configure.py`
+with the desired options prior to starting the Orchestrator
+for the first time. The available options are:
+ - `-b` or `--build-image` -- Build base containers
+ - `-d` or `--dev` -- Build using the development python image
+ - `-f FILE` or `--log_file FILE` -- Enables logging to the designated file
+ - `-h` or `--help` -- Shows the help and exits
+ - `-v` or `--verbose` -- Enables verbose output    	
+
+The configuration command is
+`bash python configure.py [OPTIONS]`
+
+> **QUESTION**: is there a recommend default for the
+> configuration command?
 
 ## Container/Services ReadMe
-### Orchestrator
-- [Core](../orchestrator/core/ReadMe.md)
-- [GUI](../orchestrator/gui/client/ReadMe.md)
 
-### Transport
-- [HTTPS](orchestrator/transport/https/README.md)
-- [MQTT](orchestrator/transport/mqtt/ReadMe.md)
+The ReadMe files for OIF Orchestrator components are linked
+here:
 
-### Logger
-- [GUI](../logger/gui/ReadMe.md)
-- [Server](../logger/server/ReadMe.md)
+|Orchestrator   | Transport  | Logger  |
+|:-:|:-:|:-:|
+| [Core](../orchestrator/core/ReadMe.md)  | [HTTPS](../orchestrator/transport/https/README.md)  | [GUI](../logger/gui/ReadMe.md)  |
+| [GUI](../orchestrator/gui/client/ReadMe.md)  | [MQTT](../orchestrator/transport/mqtt/ReadMe.md)  | [Server](../logger/server/ReadMe.md)  |
 
-#### Default Container/Service
-#### Credentials
-- OIF GUI - admin/password
-	- Note: Admin and User GUI use the same credentials but not the same login
 
-##### Ports
-- Logger GUI - HOST:8081
-- OIF GUI - HOST:8080
-- OIF API - HOST:8080/api
-- HTTPS - Orchestrator: HOST:5000(default)
 
-## Requirements
-- Docker v18+
-- Docker-Compose v1.20+
-- Python 3.6+
-- pip 18+
 
-## Configuration
-- Run `configure.py` with the desired options prior to starting the Orchestrator for the first time
-	- Options
-		- `-b` or `--build-image` -- Build base containers
-		- `-d` or `--dev` -- Build using the development python image
-    	- `-f FILE` or `--log_file FILE` -- Enables logging to the designated file
-    	- `-h` or `--help` -- Shows the help and exits
-    	- `-v` or `--verbose` -- Enables verbose output    	
-    ```bash
-    python configure.py [OPTIONS]
-    ```
 
-## Running the Compose
-### General Info
+## Running OIF Orchestrator (Docker Compose)
+
+As described in [its
+documentation](https://docs.docker.com/compose/), Docker
+Compose is use to "define and run multi-container Docker
+applications". To start OIF Orchestrator in its default
+configuration, the only required command is:
+
+```bash
+	docker-compose -f orchestrator-compose.yaml up
+```
+
+This command will:
+ - Create the necessary Docker images as defined in the
+   `orchestrator-compose.yml` configuration file
+ - Execute the application in the defined containers,
+   attached to the terminal from which it was launched  
+
+OIF execution can be terminated `ctrl-C`.
+
+The Orchestrator can also be started in detached mode using
+the docker-compose `-d` or `--detach` option:
+
+```bash
+	docker-compose up --detach
+```
+
+A detached instance of OIF is terminated with the complementary command:
+
+```bash
+	docker-compose down
+```
+> **--------------------------------------------------------------------**
+
+> **Note from Dave:** IMO for this walkthrough, which by
+> definition supposed to be basic, we should remove the
+> material below about Docker options and image building. I
+> think those things go beyond "basic walkthrough". I've
+> left it untouched for now and am jumping ahead to describe
+> first time operation of the Orchestrator.
+
+### Docker Options
 - Options
-	- * `-f FILE` or `--file FILE` -- Specify an alternate compose file (default: docker-compose.yml)
+	- `-f FILE` or `--file FILE` -- Specify an alternate compose file (default: docker-compose.yml)
 	- `-p NAME` or `--project-name NAME` -- Specify an alternate project name (default: directory name)
 	- `d` or `--detach` -- Detached mode: Run containers in the background, print new container names. Incompatible with --abort-on-container-exit.
 - Starting
 	- Run the `docker-compose` command for the Orchestrator as shown below
 
--  Stoping
-	-  If running attatched (showing log output, no -d option)
+-  Stopping
+	-  If running attached (showing log output, no -d option)
 		-  Use 'Ctrl + C' 
-	-  If running detatched (not showing log output, -d option)
+	-  If running detached (not showing log output, -d option)
 		-  Run the `docker-compose` that was used to start the Orchestrator **except** replace `up ...` with `down`
 			
 			```bash
@@ -92,6 +169,29 @@ installation and configuration of the OIF Orchestrator
 	```bash
 	docker-compose -f orchestrator-compose.yaml [-p NAME] up [-d]
     ```
+
+> **--------------------------------------------------------------------**
+
+## Accessing the Orchestrator GUI
+
+The OIF Orchestrator provides graphical user interfaces
+(GUIs) for both the user (i.e., for managing devices and
+actuators, and creating and sending OpenC2 commands and
+receiving responses) and for administration (i.e., `need
+developer input here`). The GUIs are accessed as follows:
+ - User GUI `https://localhost:8080`
+ - Admin GUI `https://localhost:8081`
+
+> **QUESTION:** are the user and admin GUIs HTTP or HTTPS?
+
+> **QUESTION:** what's the different between "Admin" and
+> "logger", if any?
+
+For both GUIs, the login credentials are 
+ - Username: `admin`
+ - Password: `password`
+
+
 
 ### Registration
 #### Registering a device with the OIF
