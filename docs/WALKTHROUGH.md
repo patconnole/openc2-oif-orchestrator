@@ -209,4 +209,21 @@ For both GUIs, the login credentials are
     -  Note: device should be registered before the actuator.
 - Upload/Copy-Paste schema. Schema for the default included ISR actuator can be found at [device/actuator/isr/act_server/schema.json](../device/actuator/isr/act_server/schema.json).
 - This information can also be found under the [ISR Actuator](../device/actuator/isr/ReadMe.md) page.
-- If you are registering a new actuator for the first time while utilizing the MQTT transport you may need to update the `MQTT_TOPICS` environment variable. Read the MQTT Topics section [here](transport/mqtt/ReadMe.md)
+- If you are registering a new actuator for the first time
+  while utilizing the MQTT transport you may need to update
+  the `MQTT_TOPICS` environment variable. Read the MQTT
+  Topics section [here](transport/mqtt/ReadMe.md)
+
+
+```mermaid
+graph LR;
+  T1[Producer Transport] --- T2;
+
+  subgraph Device
+    T2[Device Transport] --- Buffer;
+
+    Buffer --- A1[Actuator n];
+    Buffer -.- A2[Actuator n];
+    Buffer -.- A3[Actuator n];
+  end
+```
