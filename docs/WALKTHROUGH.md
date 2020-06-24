@@ -118,10 +118,11 @@ A detached instance of OIF is terminated with the complementary command:
 
 > **Note from Dave:** IMO for this walkthrough, which by
 > definition supposed to be basic, we should remove the
-> material below about Docker options and image building. I
-> think those things go beyond "basic walkthrough". I've
-> left it untouched for now and am jumping ahead to describe
-> first time operation of the Orchestrator.
+> material from the line above to the one further down about
+> Docker options and image building. I think those things go
+> beyond "basic walkthrough". I've left it untouched for now
+> and am jumping ahead to describe first time operation of
+> the Orchestrator.
 
 ### Docker Options
 - Options
@@ -177,26 +178,56 @@ A detached instance of OIF is terminated with the complementary command:
 The OIF Orchestrator provides graphical user interfaces
 (GUIs) for both the user (i.e., for managing devices and
 actuators, and creating and sending OpenC2 commands and
-receiving responses) and for administration (i.e., `need
-developer input here`). The GUIs are accessed as follows:
- - User GUI `https://localhost:8080`
- - Admin GUI `https://localhost:8081`
+receiving responses) and for administration (i.e., ... [**`need
+developer input here`**]). The GUIs are accessed as follows:
+ - User GUI -- `http://localhost:8080`
+ - Admin GUI -- `http://localhost:8081`
 
-> **QUESTION:** are the user and admin GUIs HTTP or HTTPS?
+> **NOTE:** Need to polish text based on the following Q&A: 
 
 > **QUESTION:** what's the different between "Admin" and
 > "logger", if any?
+
+- "Admin" is the Django built-in admin (more granular control of database tables) and preferences (Orch ID, Orch Name, Orch IP, CommandWait)
+ - "Logger" is the central logger for the containers (if
+   enabled)
+
+> **QUESTION:** what should this walkthrough say about the
+> Admin / Logger UI?
+
+- Admin - Granular control of existing database tables if errors/need arises for use, global preference updating
+- Logger - Central location for logs if enabled
 
 For both GUIs, the login credentials are 
  - Username: `admin`
  - Password: `password`
 
+## Create A Device
 
+An OIF Device is an entity that groups one or more OpenC2
+actuators and provides a communications interface so that
+the Orchestrator can issue commands and receive responses.
+Note that the Device isn't explicitly mentioned in the
+[OpenC2
+specifications](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=openc2#technical),
+it's an OIF construct. Devices and their associated
+actuators have to be registered in the OIF Orchestrator before
+interactions with them are possible. In addition, actuators
+must have an associated JSON schema to inform the
+Orchestrator of the action/target pairs the actuator can
+process.
+
+Devices and actuators have associated identifiers. Within
+OIF these are required to be v4 UUIDs; this is an OIF
+requirement rather than an OpenC2 requirement. While the UI
+will permit the user to enter a non-UUID value as an
+identifier, an error will occur when attempting to exchange
+commands and responses.
 
 ### Registration
 #### Registering a device with the OIF
 - Give Device a name and generate a UUID for it.
-- Select a transport
+- Select a message transfer protocol
     - HTTPS: Enter host and port (Default Port 5001)
     - MQTT: Enter host and port of the broker (Default Port 1883)
 - Select which serializations in which the device utilizes.
@@ -214,6 +245,30 @@ For both GUIs, the login credentials are
   the `MQTT_TOPICS` environment variable. Read the MQTT
   Topics section [here](transport/mqtt/ReadMe.md)
 
+
+> **NOTE:**  graphics require updating, and are currently just
+> here for testing.
+
+```mermaid
+graph LR;
+  Client -- HTTPS GUI --- GUI;
+  Client -- REST API --- Core;
+
+  subgraph Orchestrator
+    GUI -- REST API --- Core;
+    Core --- Buffer;
+
+    Buffer --- T1[AMQP Transport];
+    Buffer --- T2[CoAp Transport];
+    Buffer --- T3[HTTPS Transport];
+    Buffer --- T4[MQTT Transport];
+  end
+
+  T1 -.- DA2[AMQP Device/Actuator];
+  T2 -.- DA4[CoAP Device/Actuator];
+  T3 -.- DA6[HTTPS Device/Actuator];
+  T4 -.- DA8[MQTT Device/Actuator];
+```
 
 ```mermaid
 graph LR;
