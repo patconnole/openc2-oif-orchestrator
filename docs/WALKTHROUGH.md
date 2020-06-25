@@ -30,6 +30,9 @@ Python](https://pip.pypa.io/en/stable/installing/).
 Developers are advised to update all of the software
 components to the latest versions.
 
+> **NOTE:** Need to include something about the Docker "post
+> installation steps for Linux"
+
 Developers may optionally install [git](https://git-scm.com/)
 version control software, as a means of obtaining the OIF
 Orchestrator software.
@@ -63,7 +66,9 @@ for the first time. The available options are:
  - `-v` or `--verbose` -- Enables verbose output    	
 
 The configuration command is
-`bash python configure.py [OPTIONS]`
+```bash 
+python configure.py [OPTIONS]
+```
 
 > **QUESTION**: is there a recommend default for the
 > configuration command?
@@ -202,7 +207,13 @@ For both GUIs, the login credentials are
  - Username: `admin`
  - Password: `password`
 
-## Create A Device
+> **NOTE:** Probably want a screenshot for the following
+
+After login to the User GUI you should see a screen with a
+menu of <br>
+`Home  Devices  Actuators  Commands  Command Generator`
+
+## Create Devices and  Actuators
 
 An OIF Device is an entity that groups one or more OpenC2
 actuators and provides a communications interface so that
@@ -224,64 +235,50 @@ will permit the user to enter a non-UUID value as an
 identifier, an error will occur when attempting to exchange
 commands and responses.
 
-### Registration
-#### Registering a device with the OIF
-- Give Device a name and generate a UUID for it.
-- Select a message transfer protocol
-    - HTTPS: Enter host and port (Default Port 5001)
-    - MQTT: Enter host and port of the broker (Default Port 1883)
-- Select which serializations in which the device utilizes.
-    - Default included device supports JSON, CBOR, and XML.
-- Note: include a note about what type of device you are adding.
+### Registering a Device with the OIF
 
-#### Registering an actuator with the OIF
+The procedure to create a new device is:
+
+1. Select `Devices` from the Orchestrator menu; this brings
+  the list of registered devices.
+1. Click the `REGISTER` button at the right; this opens the
+   dialog to register a new device.
+1. Give the device a name (user's discretion).
+1. Click the `GEN ID` button to generate a Device ID (Note: while
+   the field permits user entry of an arbitrary ID, the
+   Orchestrator expects a UUID value here).
+1. Enter the Device's IP address and Port.
+   - Default port for HTTPS Transfer is 5001
+   - Default port for MQTT Transfer is 1883
+1. Select the transfer protocol to use with this device.
+1. Select the message serialization to use with this device.
+   JSON is the default serialization for OpenC2.
+1. Enter any desired information in the `Note` field. This
+   is typically used to provide a human-friendly description
+   of the device's type.
+1. Click the `REGISTER` button at bottom right to complete
+   the device registration.
+
+Device registration notes:
+
+- Registered devices have an `EDIT` button that re-opens the
+  registration dialog for updating
+- The blue `+`  button in the registration dialog permits
+  defining additional transport interfaces for a device.
+
+
+
+### Registering an Actuator with the OIF
 - Give actuator a name and generate a UUID for it.
 - Select a parent device.
     -  Note: device should be registered before the
        actuator.
 > **NOTE:**  link below is broken; need useful link
 - Upload/Copy-Paste schema. Schema for the default included ISR actuator can be found at [device/actuator/isr/act_server/schema.json](../device/actuator/isr/act_server/schema.json).
-> **NOTE:**  link below is broken; need useful link
+> **NOTE:**  "ISR actuator" link below is broken; need useful link
 - This information can also be found under the [ISR Actuator](../device/actuator/isr/ReadMe.md) page.
 - If you are registering a new actuator for the first time
   while utilizing the MQTT transport you may need to update
   the `MQTT_TOPICS` environment variable. Read the MQTT
   Topics section [here](transport/mqtt/ReadMe.md)
 
-
-> **NOTE:**  graphics require updating, and are currently just
-> here for testing.
-
-```mermaid
-graph LR;
-  Client -- HTTPS GUI --- GUI;
-  Client -- REST API --- Core;
-
-  subgraph Orchestrator
-    GUI -- REST API --- Core;
-    Core --- Buffer;
-
-    Buffer --- T1[AMQP Transport];
-    Buffer --- T2[CoAp Transport];
-    Buffer --- T3[HTTPS Transport];
-    Buffer --- T4[MQTT Transport];
-  end
-
-  T1 -.- DA2[AMQP Device/Actuator];
-  T2 -.- DA4[CoAP Device/Actuator];
-  T3 -.- DA6[HTTPS Device/Actuator];
-  T4 -.- DA8[MQTT Device/Actuator];
-```
-
-```mermaid
-graph LR;
-  T1[Producer Transport] --- T2;
-
-  subgraph Device
-    T2[Device Transport] --- Buffer;
-
-    Buffer --- A1[Actuator n];
-    Buffer -.- A2[Actuator n];
-    Buffer -.- A3[Actuator n];
-  end
-```
