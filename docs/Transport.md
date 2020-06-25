@@ -4,6 +4,9 @@ This is a tutorial on adding additional, custom transport mechanisms to the O.I.
 
 ## Adding Transport to Docker Stack
 
+> **NOTE:**  "orchestrator compose" link below is broken;
+> need fix,
+
 Open the [Orchestrator Compose file](orchestrator-compose.yaml) to add your transport to the stack. You can copy-paste either the `transport-https` or `transport-mqtt` images and replace it with your own transport's info. Read more on Docker Compose [here](https://docs.docker.com/compose/overview/).
 
 Here is what our HTTPS transport looks like:
@@ -40,6 +43,9 @@ The IP can be set in the O.I.F. Admin Page > Global Preferences > Orchestrator H
 The Port for each transport needs to be set in the data fixtures file [orchestrator.json](../orchestrator/core/orc_server/data/fixtures/orchestrator.json). (See example at bottom of this page.) The port is specified under orchestrator.protocol under the "fields" section once you have added your transport to the list of orchestator.protocols. 
 
 ## Listening to the Internal Buffer
+
+> **NOTE:**  the links below for `sb_utils` and "view an
+> example" return 404 on GH (at least in my fork); need to fix
 
 The Orchestrator and Device routes messages to the correct transport by using an internal AMQP broker. This buffer is a structure that is a part of the O.I.F. for routing messages to the correct locations, but NOT a part of OpenC2 itself. Note that the port does not appear in the docker-compose file, because although the image utilizes default port 5672 for AMQP, the port is not exposed. The [sb_utils](../modules/utils/sb_utils/amqp_tools.py) module has a Consumer wrapper available for use to easily implement for your transport. You can view an example [here](../orchestrator/transport/https/https/https_transport.py) which looks like this:
 

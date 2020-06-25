@@ -237,8 +237,11 @@ commands and responses.
 #### Registering an actuator with the OIF
 - Give actuator a name and generate a UUID for it.
 - Select a parent device.
-    -  Note: device should be registered before the actuator.
+    -  Note: device should be registered before the
+       actuator.
+> **NOTE:**  link below is broken; need useful link
 - Upload/Copy-Paste schema. Schema for the default included ISR actuator can be found at [device/actuator/isr/act_server/schema.json](../device/actuator/isr/act_server/schema.json).
+> **NOTE:**  link below is broken; need useful link
 - This information can also be found under the [ISR Actuator](../device/actuator/isr/ReadMe.md) page.
 - If you are registering a new actuator for the first time
   while utilizing the MQTT transport you may need to update
