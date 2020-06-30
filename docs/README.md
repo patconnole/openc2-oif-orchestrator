@@ -1,22 +1,19 @@
-# O.I.F. (OpenC2 Integration Fabric)
+# OpenC2 Integration Framework OIF
 
 ## Overview
 
-OpenC2 Integration Framework (OIF) is a project that will
-enable developers to create and test OpenC2 specifications
+The OpenC2 Integration Framework (OIF) is a project that 
+enables developers to create and test OpenC2 specifications
 and implementations without having to recreate an entire
-OpenC2 ecosystem.  The OIF consists of two major parts. The
+OpenC2 ecosystem. OIF consists of two major parts. The
 ["OIF Orchestrator" (this
 repository)](https://github.com/oasis-open/openc2-oif-orchestrator)
 which functions as an OpenC2 producer and the "[OIF
 Device](https://github.com/oasis-open/openc2-oif-device)"
 which functions as an OpenC2 consumer. Due to port bindings
 it is recommended that the Orchestrator and the Device not
-be run on the same machine.
-
-> **DPL Question:**  can we say something about running them in
-> multiple VMs or Docker containers hosted on the same
-> machine? Or should we explicitly say that's not a good idea.
+be run on the same machine without careful handling of the
+container ports.
 
 This document contains the information necessary for experienced
 developers to begin working with the OIF Orchestrator. A
@@ -25,8 +22,12 @@ more detailed start-up explanation can be found in
 
 ## Container/Services ReadMe
 
-The ReadMe files for OIF Orchestrator components are linked
-here:
+At runtime, OIF Orchestrator utilizes at least four Docker containers. This architecture allows OIF to support multiple transports and multiple consumer-clients at the same time. The main orchestrator-compose.yaml defines which containers are used, and their respective Dockerfiles and sources are located in the orchestrator subdirectories core, gui, and transport. As hinted by the name, Core is the brains of the operation. Transport containers (https, mqtt, etc) terminate all communication with any remote OpenC2 Consumer(s), then forward incoming messages to a RabbitMQ queue container, from which Core pulls. Outgoing communications are published to the queue, with each transport container waiting on the queue for their respective messages to send out.
+
+A basic OIF instantiation would have the user interacting with the GUI container using a web-browser, with Core, HTTPS, RabbitMQ containers doing the real work behind the scenes. 
+
+
+The ReadMe files for the OIF Orchestrator containers are linked here:
 
 |Orchestrator   | Transport  | Logger  |
 |:-:|:-:|:-:|
@@ -39,18 +40,18 @@ here:
 ### GUI User Credentials
 
 > Note: Admin and User GUI use the same default credentials
-> but are separate logins
+> but represent different logins.
 
 * Username: admin
 * PW: password
 
 ### Ports
-The following ports are configured as defaults for OIF
-functions: 
-- Logger GUI - HOST:8081
-- OIF GUI - HOST:8080
-- OIF API - HOST:8080/api
-- HTTPS - Orchestrator: HOST:5000(default)
+The following ports are configured as defaults for OIF functions: 
+- 8080 - OIF GUI: Access the OIF Orchestrator GUI in a web browser
+- 5000 - HTTPS Listener: Consumer Devices send messages to this port
+- 8081 - Logger GUI (beta)
+- 8080/api - OIF API
+
 
 ## System Requirements
 Minimum requirements to run the OIF Orchestrator
@@ -59,53 +60,54 @@ Minimum requirements to run the OIF Orchestrator
 - Python 3.6+
 - pip 18+
 
-## Configuration
-- Run `configure.py` with the desired options prior to starting the Orchestrator for the first time
+## Running the Orchestrator
+### Configuration
+- Run `configure.py` for a default installation. Advanced users may use the options below:
 	- Options
 		- `-b` or `--build-image` -- Build base containers
 		- `-d` or `--dev` -- Build using the development python image
     	- `-f FILE` or `--log_file FILE` -- Enables logging to the designated file
     	- `-h` or `--help` -- Shows the help and exits
-    	- `-v` or `--verbose` -- Enables verbose output    	
-    ```bash
-    python configure.py [OPTIONS]
-    ```
+    	- `-v` or `--verbose` -- Enables verbose output
+	```bash
+	python configure.py
+	```
 
-## Running the Compose
+
 ### General Info
-- Options
-	- `-f FILE` or `--file FILE` -- Specify an alternate compose file (default: docker-compose.yml)
-	- `-p NAME` or `--project-name NAME` -- Specify an alternate project name (default: directory name)
-	- `d` or `--detach` -- Detached mode: Run containers in the background, print new container names. Incompatible with --abort-on-container-exit.
-- Starting
-    - Run the `docker-compose` command for the Orchestrator
-      as shown below
-> **DPL Question:** Is something missing here? Like the
-> actual `docker-compose` command? Otherwise, the target of
-> "as shown below" is a bit vague.
+- Start:
+	- Run the docker-compose `up` command in the same directory as orchestrator-compose.yaml:
+		- Options
+			- `-f FILE` or `--file FILE` -- Specify an alternate compose file (default: docker-compose.yml)
+			- `-p NAME` or `--project-name NAME` -- Specify an alternate project name (default: directory name)
+			- `d` or `--detach` -- Detached mode: Run containers in the background, print new container names. Incompatible with --abort-on-container-exit.
+	```bash
+	docker-compose -f orchestrator-compose.yaml -p Orchestrator up
+	```
 
--  Stopping
-	-  If running attached (showing log output, no -d option)
-		-  Use 'Ctrl + C' 
-	-  If running detached (not showing log output, -d option)
-		-  Run the `docker-compose` that was used to start the Orchestrator **except** replace `up ...` with `down`
-			
-			```bash
-			docker-compose ...... down
-			```
-- Building Images
-	- Run the `docker-compose` that was used to start the Orchestrator **except** replace `up ...` with `build`
+- Open GUI:
+	- Open a web-browser to http://localhost:8080 and login to OIF Orchestrator
+	- Quickstart! Register a device and accompanying actuator, upload a json schema, and start publishing OpenC2 Commands!
+
+- Stop:
+	- If running attached (showing log output, no -d option), first use 'Ctrl + C'
+	```bash
+	docker-compose -f orchestrator-compose.yaml -p Orchestrator down
+	```
+
+
+- Build Images:
+	- Images are built automatically on your first run, but you can build them manually too.
 	- Options
         - SERVICE_NAME - The name of the service to rebuild
           the image, if not specified all services will
           build
 	- Notes
-		- Does not need to be run prior to starting, the containers will autobuild if not available
 		- Should be run after adding a new Protocol or Serialization
-	
 	```bash
-	docker-compose ...... build [SERVICE_NAME]
+	docker-compose -f orchestrator-compose.yaml -p Orchestrator build
 	```
+
 
 ### Docker Compose Files
 
@@ -115,15 +117,9 @@ Minimum requirements to run the OIF Orchestrator
 - Runs on default port of 8081 for logger web GUI
 
 	```bash
-	docker-compose -f orchestrator-compose.yaml -f orchestrator-compose.log.yaml ...
+	docker-compose -f orchestrator-compose.yaml -f orchestrator-compose.log.yaml
 	```
 
-#### Orchestrator
-- Use [`docker-compose`](https://docs.docker.com/compose/reference/overview/) to start the orchestrator on the system
-
-	```bash
-	docker-compose -f orchestrator-compose.yaml [-p NAME] up [-d]
-    ```
 
 ### Registration
 
